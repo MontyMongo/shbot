@@ -1,3 +1,4 @@
+from src.SH.definitions import *
 from src.SH.components.component_base import SHGameComponent
 import random
 
@@ -11,34 +12,44 @@ class SHGameComponentPremiseDefault(SHGameComponent):
         # ...
 
     async def Setup(self):
-        print("hello i got here")
-        _roles = list(x for x in get_base_roles(self.parent.size))
-        _num_fascists = sum([1 for x in _roles if x == "F"])
-        random.shuffle(_roles)
-        #await self.parent.message_main(content="test")
-        for i in range(self.parent.size):
-            s_n = i+1
-            self.parent.s_seats[s_n]["role"] = _roles[i]
-            msg = "The game begins and you receive the " + get_role_name(_roles[i]) + " role."
-            if _roles[i] == "H":
-                _grammar = ("is " + str(_num_fascists) + " **Fascist**,") if _num_fascists == 1 else ("are " + str(_num_fascists) + " **Fascists,**")
-                msg += "\nThere " + _grammar + " they know who you are."
-            elif _roles[i] == "F":
-                for j in range(self.parent.size):
-                    if _roles[j] == "F" and j != i:
-                        msg += "\nYou see that " + self.parent.s_seats[j+1]["name"] + " is also a **Fascist.**"
-                for j in range(self.parent.size):
-                    if _roles[j] == "H" and j != i:
-                        msg += "\nYou see that " + self.parent.s_seats[j+1]["name"] + " is **Hitler.** They " + "do not know who you are."
-            await self.parent.message_seat(s_n, content=msg)
-        self.parent.UpdateToComponent("nomination", False)
-        await self.parent.Handle(None)
+        if self.parent.get("game_over"):
+            await self.end_game()
+        else:
+            _roles = list(x for x in get_base_roles(self.parent.size))
+            _num_fascists = sum([1 for x in _roles if x == "F"])
+            random.shuffle(_roles)
+            #await self.parent.message_main(content="test")
+            for i in range(self.parent.size):
+                s_n = i+1
+                self.parent.s_seats[s_n]["role"] = _roles[i]
+                msg = "The game begins and you receive the " + get_role_name(_roles[i]) + " role."
+                if _roles[i] == "H":
+                    _grammar = ("is " + str(_num_fascists) + " **Fascist**,") if _num_fascists == 1 else ("are " + str(_num_fascists) + " **Fascists,**")
+                    msg += "\nThere " + _grammar + " they know who you are."
+                elif _roles[i] == "F":
+                    for j in range(self.parent.size):
+                        if _roles[j] == "F" and j != i:
+                            msg += "\nYou see that " + self.parent.s_seats[j+1]["name"] + " is also a **Fascist.**"
+                    for j in range(self.parent.size):
+                        if _roles[j] == "H" and j != i:
+                            msg += "\nYou see that " + self.parent.s_seats[j+1]["name"] + " is **Hitler.** They " + "do not know who you are."
+                await self.parent.message_seat(s_n, content=msg)
+            self.parent.UpdateToComponent("nomination", False)
+            await self.parent.Handle(None)
 
     async def Handle(self, context):
         pass
 
     async def Teardown(self):
         pass
+
+    async def end_game(self):
+        _wincon = self.parent.get("win_condition")
+        if _wincon == LIBERAL_POLICY_VICTORY or _wincon == HITLER_EXECUTED:
+            await self.parent.message_main("**Liberals** win the game.")
+        elif _wincon == FASCIST_POLICY_VICTORY or _wincon == HITLER_ELECTED:
+            await self.parent.message_main("**Fascists** win the game.")
+        return
 
 #   
 # Returns the base role distributions for a classic SH game,

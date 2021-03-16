@@ -1,7 +1,10 @@
-def generate_base_preset(players=5, gamemode="default"):
+from src.SH.definitions import *
+
+def generate_preset(flags=None):
     data = {
 
     }
+    players = flags["players"]
 
     _startingComponents = {
 		"premise"      : "default",
@@ -14,6 +17,11 @@ def generate_base_preset(players=5, gamemode="default"):
 		"post_policy"  : "no_op",
 		"policy_power" : "empty"
 	}
+
+    if "gamemode" in flags:
+        _startingComponents["premise"] = "avalon"
+    if "nodoubletd" in flags:
+        _startingComponents["tracker"] = "no_double_td"
 
     _libBoard = ["empty"] * 5
     _fasBoard = ["empty"] * 6
@@ -30,15 +38,23 @@ def generate_base_preset(players=5, gamemode="default"):
         _fasBoard[2] = "special_elect"
     
     _boards = {
-        "Liberal": _libBoard,
-        "Fascist": _fasBoard
+        LIBERAL_POLICY: _libBoard,
+        FASCIST_POLICY: _fasBoard
     }
 
     data["STARTING_COMPONENTS"] = _startingComponents
     data["BOARDS"] = _boards
     data["HZ_ENTRY"] = 3
+    if "hz" in flags:
+        _hz_entry = flags["hz"]
+        if _hz_entry in [1, 2, 3, 4, 5, 6]:
+            data["HZ_ENTRY"] = _hz_entry
     data["VZ_ENTRY"] = 5
+    if "vz" in flags:
+        _vz_entry = flags["vz"]
+        if _vz_entry in [1, 2, 3, 4, 5, 6]:
+            data["VZ_ENTRY"] = _vz_entry
+        
     
     # any other game-wide constants should go here.
-    
     return data

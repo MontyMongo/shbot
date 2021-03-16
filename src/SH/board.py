@@ -1,3 +1,4 @@
+from SH.definitions import FASCIST_POLICY, LIBERAL_POLICY
 from src.game_all.create_component import CreateComponentFromQualified
 from src.utils.aobject import aobject
 
@@ -32,8 +33,8 @@ class SHBoard (aobject):
         self.board_configs = self.parent.get("BOARDS")
 
         self.board_lengths = {
-            "Liberal": len(self.board_configs["Liberal"]),
-            "Fascist": len(self.board_configs["Fascist"])
+            LIBERAL_POLICY: len(self.board_configs[LIBERAL_POLICY]),
+            FASCIST_POLICY: len(self.board_configs[FASCIST_POLICY])
         }
         #
         #   Load in the starting elements. 
@@ -45,8 +46,8 @@ class SHBoard (aobject):
         #   Policy info.
         #
         self.policiesPlayed = {
-            "Liberal": 0,
-            "Fascist": 0
+            LIBERAL_POLICY: 0,
+            FASCIST_POLICY: 0
         }
         self.lastPolicy = None
 

@@ -1,6 +1,8 @@
 import json
 import random
 
+from SH.definitions import FASCIST_POLICY, LIBERAL_POLICY
+
 #
 # Controls the deck for a Game. Contains full knowledge about both the deck
 # and discard piles (defined explicitly).
@@ -8,17 +10,6 @@ import random
 class SHDeck (object):
 
     def __init__(self):
-
-        #
-        # The deck is stored internally as a list of numbers, for a base
-        # game with only two types of policies, these are 0 for Liberal
-        # and 1 for Fascist. The schema maps numbers to names.
-        #
-        self.schema = {
-            0: "Liberal",
-            1: "Fascist"
-        }
-
         self.DEFAULT_LIB_POLICIES = 6
         self.DEFAULT_FAS_POLICIES = 11
 
@@ -35,9 +26,9 @@ class SHDeck (object):
             self.deck = []
             # unused variable "i" :pepeLaugh:
             for i in range(self.DEFAULT_LIB_POLICIES):
-                self.deck.append(0)
+                self.deck.append(LIBERAL_POLICY)
             for i in range(self.DEFAULT_FAS_POLICIES):
-                self.deck.append(1)
+                self.deck.append(FASCIST_POLICY)
             self.shuffle(False)
         else:
             pass

@@ -1,3 +1,4 @@
+from src.SH.definitions import *
 from src.SH.components import *
 from src.SH.components.component_base import SHGameComponent
 
@@ -36,9 +37,14 @@ class SHGameComponentPolicy_powerExecute (SHGameComponent):
                 await self.parent.message_main(content="President " + self.parent.s_seats[_pres]["name"] + " chooses to execute " + 
                                                 " player " + self.parent.s_seats[_target]["name"] + ".")
                 
-                # TODO update "alive flag" for dead player
+                self.parent.s_seats[_target]["alive"] = False
+                self.parent.set("alive_players", self.parent.get("alive_players") - 1)
+                if self.parent.s_seats[_target]["role"] == HITLER:
+                    self.parent.set("game_over", True)
+                    self.parent.set("win_condition", HITLER_EXECUTED)
+                    self.parent.UpdateToComponent("premise", False)
+
                 # TODO remove chat perms of dead player
-                # TODO check for victory on hitler execution
 
                 self.parent.UpdateToComponent("post_policy", False)
                 return

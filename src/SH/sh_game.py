@@ -1,10 +1,10 @@
-from definitions import *
+from SH.definitions import *
 from src.SH.board import SHBoard
 from src.SH.deck import SHDeck
 from src.utils import message as msg
 from src.utils.aobject import aobject
 from src.game_all.game_base import Game
-from src.SH.presets import generate_base_preset
+from src.SH.presets import generate_preset
 
 import random
 import discord
@@ -120,17 +120,25 @@ class SHGame (Game):
             }
             self.s_seats[_n] = data
 
+        
+
+        _temp = {
+            "players": self.size,
+        }
+        flags.update(_temp)
+
+
         # 
         # Stores any and all 'global' data for a game.
         # Use in any component you like, free of charge.
         # 
-
-        self.game_data = generate_base_preset()
+        self.game_data = generate_preset(flags=flags)
         self.customize(flags)
         self.set("s_president", 1)
         self.set("s_chancellor", None)
         self.set("s_government_history", [])
         self.set("game_over", False)
+        self.set("alive_players", self.size)
 
         #
         #   The array of SHGameComponents that are currently active,
@@ -243,30 +251,6 @@ class SHGame (Game):
         self.shouldProgress  = True
         self.policyWasPlayed = policyPlayed
     
-
-    #
-    #   Updates the default settings returned by presets.generate_base_preset() in accordance
-    #   with flags passed in by the user. Should do some semblance of input sanitizing!
-    #
-
-    def customize(self, params):
-        if "gamemode" in params:
-            _gamemode = params["gamemode"]
-            if _gamemode == "avalon":
-                self.set("STARTING_COMPONENTS/premise", "avalon")
-        if "nodoubletd" in params:
-            self.set("STARTING_COMPONENTS/tracker", "no_double_td")
-        if "hz" in params:
-            _hz_entry = params["hz"]
-            if _hz_entry in [1, 2, 3, 4, 5, 6]:
-                self.set("HZ_ENTRY", _hz_entry)
-        if "vz" in params:
-            _vz_entry = params["vz"]
-            if _vz_entry in [1, 2, 3, 4, 5, 6]:
-                self.set("VZ_ENTRY", _vz_entry)
-                
-
-
     ##
     # Enacts a given policy (of type 1 or 0, or as specified
     # in SHDeck. If fire_event is set to true, instructs
@@ -278,13 +262,13 @@ class SHGame (Game):
         _policy_emoji = None
         print(policy_type)
         print("got here 2")
-        if policy_type == 0: # TODO Magic numbers, to an extent.
-            _board.policiesPlayed["Liberal"] += 1
-            _board.lastPolicy = "Liberal"
+        if policy_type == LIBERAL_POLICY: # TODO Magic numbers, to an extent.
+            _board.policiesPlayed[LIBERAL_POLICY] += 1
+            _board.lastPolicy = LIBERAL_POLICY
             _policy_emoji = self.request_emoji("L")
-        elif policy_type == 1:
-            _board.policiesPlayed["Fascist"] += 1
-            _board.lastPolicy = "Fascist"
+        elif policy_type == FASCIST_POLICY:
+            _board.policiesPlayed[FASCIST_POLICY] += 1
+            _board.lastPolicy = FASCIST_POLICY
             _policy_emoji = self.request_emoji("F")
         else:
             return

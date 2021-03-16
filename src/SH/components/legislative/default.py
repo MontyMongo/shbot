@@ -1,3 +1,4 @@
+from src.SH.definitions import *
 from src.SH.components.component_base import SHGameComponent
 from src.utils import message as msg
 
@@ -9,7 +10,6 @@ class SHGameComponentLegislativeDefault (SHGameComponent):
 
     async def Setup(self):
         self.draw = self.parent.deck.draw(3)
-        print("ok but i got here ya?")
         await self.deal_to_president()
 
     async def Handle(self, context):
@@ -63,7 +63,7 @@ class SHGameComponentLegislativeDefault (SHGameComponent):
         _fas_emoji = self.parent.request_emoji("F")
         _lib_emoji = self.parent.request_emoji("L")
         print("draw", self.draw)
-        _draw_contents = ''.join([_fas_emoji if x == 1 else _lib_emoji for x in self.draw])
+        _draw_contents = ''.join([_fas_emoji if x == FASCIST_POLICY else _lib_emoji for x in self.draw])
         _message_content = "Your draw: " + _draw_contents + "\nChoose a policy to discard."
         self.private_message = await self.parent.message_seat(self.parent.get("s_president"), content=_message_content)
         self.status = "await_president_discard"
@@ -77,7 +77,7 @@ class SHGameComponentLegislativeDefault (SHGameComponent):
     async def deal_to_chancellor(self):
         _fas_emoji = self.parent.request_emoji("F")
         _lib_emoji = self.parent.request_emoji("L")
-        _draw_contents = ''.join([_fas_emoji if x == 1 else _lib_emoji for x in self.draw])
+        _draw_contents = ''.join([_fas_emoji if x == FASCIST_POLICY else _lib_emoji for x in self.draw])
         _message_content = "Your draw: " + _draw_contents + "\nChoose a policy to play."
         self.private_message = await self.parent.message_seat(self.parent.get("s_chancellor"), content=_message_content)
         self.status = "await_chancellor_discard"
